@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inshorts/pages/news/cubit/news_cubit.dart';
 import 'package:inshorts/pages/web_view/web_view_screen.dart';
 import 'package:inshorts/repository/model/news_model.dart';
+import 'package:inshorts/shared/shared_pre.dart';
 import 'package:inshorts/shared/spacing.dart';
 import 'package:inshorts/shared/toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -17,10 +18,12 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
-  final List<String> items = List.generate(20, (index) => 'Item ${index + 1}');
   final PageController pageController = PageController();
   int currentIndex = 0;
   bool _visible = true;
+  String language = "default";
+  int page = 1;
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -31,14 +34,12 @@ class _NewsPageState extends State<NewsPage> {
         listener: (context, state) {
           if (state is ErrorState) {
             toast(message: state.error);
+          } else if (state is LanguageState) {
+            language = state.language;
           }
         },
         builder: (context, state) {
-          if (state is ProcessingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state is NewsLoadingSuccessState) {
+          if (state is NewsLoadingSuccessState) {
             List<NewsModel>? newsList = state.newsList;
             return Stack(
               children: [
@@ -47,6 +48,11 @@ class _NewsPageState extends State<NewsPage> {
                   scrollDirection: Axis.vertical,
                   itemCount: newsList?.length,
                   onPageChanged: (index) {
+                    if (index > currentIndex && index % 5 == 0) {
+                      page += 1;
+                      BlocProvider.of<NewsCubit>(context)
+                          .fetchAdditionalNews(page: page);
+                    }
                     setState(() {
                       currentIndex = index;
                     });
@@ -60,23 +66,55 @@ class _NewsPageState extends State<NewsPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CachedNetworkImage(
-                              imageUrl: news.image,
-                              width: width,
-                              height: height * 0.4,
-                              placeholder: (context, url) => Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
-                                child: Container(
-                                  width: width,
-                                  height: height * 0.4,
-                                  color: Colors.white,
+                            Stack(
+                              children: [
+                                Column(
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl: news.image,
+                                      fit: BoxFit.cover,
+                                      width: width,
+                                      height: height * 0.4,
+                                      placeholder: (context, url) =>
+                                          Shimmer.fromColors(
+                                        baseColor: Colors.grey[300]!,
+                                        highlightColor: Colors.grey[100]!,
+                                        child: Container(
+                                          width: width,
+                                          height: height * 0.4,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
+                                    verticalSpaceRegular,
+                                  ],
                                 ),
-                              ),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
+                                Positioned(
+                                    top: height * 0.385,
+                                    right: 30,
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.2),
+                                              blurRadius: 1,
+                                              offset: Offset(0, 3),
+                                            ),
+                                          ],
+                                        ),
+                                        child: const Text(
+                                          "   npshorts   ",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ))),
+                              ],
                             ),
-                            verticalSpaceRegular,
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 20),
@@ -103,8 +141,10 @@ class _NewsPageState extends State<NewsPage> {
                                           height: 1.5,
                                         ),
                                       ),
+                                      verticalSpaceRegular,
                                       Text(
-                                        news.content,
+                                        news.content.substring(0, 220),
+                                        textAlign: TextAlign.justify,
                                         style: const TextStyle(
                                           color: Colors.black54,
                                           fontSize: 24,
@@ -154,8 +194,7 @@ class _NewsPageState extends State<NewsPage> {
                                         style: TextStyle(
                                           color: Colors.white38,
                                           fontWeight: FontWeight.w100,
-                                          fontSize: 16,
-                                          // height: 1.5,
+                                          fontSize: 14,
                                         ),
                                       )
                                     ],
@@ -182,9 +221,23 @@ class _NewsPageState extends State<NewsPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const SizedBox.shrink(),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (language == "en") {
+                                  savePreference(key: "language", value: "np");
+                                } else {
+                                  savePreference(key: "language", value: "en");
+                                }
+                                BlocProvider.of<NewsCubit>(context)
+                                    .fetchInitialNews();
+                              },
+                              child: Text(language == "en" ? "NP" : "EN"),
+                            ),
+                          ),
                           const Text(
-                            '             My Feed',
+                            'My Feed',
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 18,
@@ -198,7 +251,7 @@ class _NewsPageState extends State<NewsPage> {
                                   ),
                                   onPressed: () =>
                                       BlocProvider.of<NewsCubit>(context)
-                                          .fetchNews(),
+                                          .fetchInitialNews(),
                                 )
                               : CupertinoButton(
                                   child: const Icon(
@@ -223,7 +276,9 @@ class _NewsPageState extends State<NewsPage> {
               ],
             );
           } else {
-            return Container();
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
         },
       ),

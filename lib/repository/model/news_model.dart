@@ -26,7 +26,7 @@ class NewsModel {
       id: json['id'].toString(),
       userId: json['user_id'].toString(),
       title: json['title'],
-      slug: json['slug'],
+      slug: json['slug'].toString(),
       content: json['content'],
       image: json['image'],
       isPublished: json['is_published'].toString(),

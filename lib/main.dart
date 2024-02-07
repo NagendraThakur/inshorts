@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inshorts/pages/news/cubit/news_cubit.dart';
-import 'package:inshorts/pages/news/presentation/news_page.dart';
 import 'package:flutter/services.dart';
+import 'package:inshorts/pages/routes/routes.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +30,8 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           useMaterial3: true,
         ),
-        home: NewsPage(),
+        onGenerateRoute: Routes.onGenerateRoute,
+        initialRoute: "/language",
       ),
     );
   }
