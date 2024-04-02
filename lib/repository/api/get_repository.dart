@@ -4,7 +4,9 @@ import 'package:inshorts/repository/api/api.dart';
 
 class GetRepository {
   API api = API();
-  static String news = "/api/v1/news";
+  static String news = "/v1/news";
+  static String interest = "/v1/category";
+
   Future<dynamic> getRequest({
     required String path,
     Map<String, dynamic>? additionalHeader,

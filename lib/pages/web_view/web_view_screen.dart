@@ -5,7 +5,7 @@ class WebViewPage extends StatelessWidget {
   final String url;
   final WebViewController controller;
 
-  WebViewPage({required this.url})
+  WebViewPage({super.key, required this.url})
       : controller = WebViewController()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..setBackgroundColor(const Color(0x00000000))

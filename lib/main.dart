@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inshorts/pages/news/cubit/news_cubit.dart';
 import 'package:flutter/services.dart';
-import 'package:inshorts/pages/routes/routes.dart';
+import 'package:inshorts/routes/routes.dart';
+import 'package:inshorts/pages/interest/cubit/interest_cubit.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]).then((value) => runApp(MyApp()));
+  ]).then((value) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -17,7 +18,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => NewsCubit())],
+      providers: [
+        BlocProvider(create: (context) => NewsCubit()),
+        BlocProvider(create: (context) => InterestCubit()),
+      ],
       child: MaterialApp(
         title: 'Inshorts',
         debugShowCheckedModeBanner: false,

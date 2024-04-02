@@ -24,10 +24,10 @@ void printSharedPreferencesData() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   Set<String> keys = prefs.getKeys();
 
-  keys.forEach((key) {
+  for (var key in keys) {
     dynamic value = prefs.get(key);
     print('$key : $value');
-  });
+  }
 }
 
 Future<void> deleteAllSharedPreferences() async {
