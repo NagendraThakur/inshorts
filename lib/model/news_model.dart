@@ -1,14 +1,15 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:inshorts/model/category_model.dart';
 
 class NewsModel {
   final String id;
   final String? userId;
-  final String title;
+  final String enTitle;
+  final String npTitle;
   final String? slug;
   final String enContent;
   final String npContent;
-  final String image;
+  final String media;
+  final String mediaType;
   final String? isPublished;
   final String? url;
   final String? categoryId;
@@ -19,11 +20,13 @@ class NewsModel {
   NewsModel({
     required this.id,
     this.userId,
-    required this.title,
+    required this.enTitle,
+    required this.npTitle,
     this.slug,
     required this.enContent,
     required this.npContent,
-    required this.image,
+    required this.media,
+    required this.mediaType,
     this.isPublished,
     this.url,
     this.categoryId,
@@ -36,26 +39,32 @@ class NewsModel {
     return NewsModel(
       id: json['id'].toString(),
       userId: json['user_id'].toString(),
-      title: json['title'],
+      enTitle: json['en_title'],
+      npTitle: json['np_title'],
       slug: json['slug'].toString(),
       enContent: json['en_content'],
       npContent: json['np_content'],
-      image: json['image'],
+      media: json['media'],
+      mediaType: json['media_type'],
       isPublished: json['is_published'].toString(),
       url: json['url'],
       categoryId: json['category_id'],
       category: CategoryModel.fromJson(json['category']),
+      isLiked: json['isLiked'].toString() == "1" ? true : false,
+      isBookMarked: json['isBookmarked'].toString() == "1" ? true : false,
     );
   }
 
   NewsModel copyWith({
     String? id,
     String? userId,
-    String? title,
+    String? enTitle,
+    String? npTitle,
     String? slug,
     String? enContent,
     String? npContent,
-    String? image,
+    String? media,
+    String? mediaType,
     String? isPublished,
     String? url,
     String? categoryId,
@@ -66,11 +75,13 @@ class NewsModel {
     return NewsModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
-      title: title ?? this.title,
+      enTitle: enTitle ?? this.enTitle,
+      npTitle: npTitle ?? this.npTitle,
       slug: slug ?? this.slug,
       enContent: enContent ?? this.enContent,
       npContent: npContent ?? this.npContent,
-      image: image ?? this.image,
+      media: media ?? this.media,
+      mediaType: mediaType ?? this.mediaType,
       isPublished: isPublished ?? this.isPublished,
       url: url ?? this.url,
       categoryId: categoryId ?? this.categoryId,

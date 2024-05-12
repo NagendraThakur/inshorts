@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => InterestCubit()),
       ],
       child: MaterialApp(
-        title: 'Inshorts',
+        title: 'Rapid Read',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           textTheme: const TextTheme(

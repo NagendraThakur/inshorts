@@ -9,13 +9,18 @@ class PostRepository {
   API api = API();
   static String googleAuth = "/v1/auth/sign-in";
   static String linkUserCategory = "/v1/link-user-category";
+  static String createLike = "/v1/like";
+  static String createBookMark = "/v1/bookmark";
 
   Future<dynamic> posRequest(
       {required String path, String? editId, required Object body}) async {
     try {
-      Map<String, dynamic> headers = {
-        "Authorization": "Bearer ${Config.token}",
-      };
+      Map<String, dynamic> headers = {};
+
+      if (Config.token != null) {
+        headers.addAll({"Authorization": "Bearer ${Config.token}"});
+      }
+
       print(headers);
       editId != null && editId.isNotEmpty ? path = "$path/$editId" : null;
       Response response = await api.sendRequest.post(

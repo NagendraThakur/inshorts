@@ -1,8 +1,8 @@
 import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:inshorts/constants/config.dart';
-import 'package:inshorts/repository/api/google_access_token.dart';
-import 'package:inshorts/repository/api/post_repository.dart';
+import 'package:inshorts/repository/google_access_token.dart';
+import 'package:inshorts/repository/post_repository.dart';
 import 'package:inshorts/model/category_model.dart';
 import 'package:inshorts/shared/shared_pre.dart';
 
@@ -27,6 +27,7 @@ class SignUpCubit extends Cubit<SignUpState> {
 
         Config.token = token;
         savePreference(key: "token", value: token);
+        savePreference(key: "log", value: "log");
 
         if (categoryList != null && categoryList.isNotEmpty) {
           emit(state.copyWith(hasCategory: true));

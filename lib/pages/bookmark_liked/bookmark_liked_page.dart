@@ -17,14 +17,14 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:intl/intl.dart';
 
-class NewsPage extends StatefulWidget {
-  const NewsPage({Key? key}) : super(key: key);
+class BookmarkLikedPage extends StatefulWidget {
+  const BookmarkLikedPage({Key? key}) : super(key: key);
 
   @override
-  _NewsPageState createState() => _NewsPageState();
+  _BookmarkLikedPageState createState() => _BookmarkLikedPageState();
 }
 
-class _NewsPageState extends State<NewsPage> {
+class _BookmarkLikedPageState extends State<BookmarkLikedPage> {
   final PageController _pageController = PageController();
   List<NewsModel>? _newsList = [];
   int _currentIndex = 0;
@@ -35,12 +35,6 @@ class _NewsPageState extends State<NewsPage> {
   Color _getColorFromHex(String hexColor) {
     final hexCode = hexColor.replaceAll('#', '');
     return Color(int.parse('FF$hexCode', radix: 16));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    BlocProvider.of<NewsCubit>(context).fetchInitialNews();
   }
 
   @override
@@ -80,11 +74,11 @@ class _NewsPageState extends State<NewsPage> {
           scrollDirection: Axis.vertical,
           itemCount: _newsList?.length,
           onPageChanged: (index) {
-            if (index > _currentIndex && index % 5 == 0) {
-              _page += 1;
-              BlocProvider.of<NewsCubit>(context)
-                  .fetchAdditionalNews(page: _page);
-            }
+            // if (index > _currentIndex && index % 5 == 0) {
+            //   _page += 1;
+            //   BlocProvider.of<NewsCubit>(context)
+            //       .fetchAdditionalNews(page: _page);
+            // }
             setState(() {
               _currentIndex = index;
             });
@@ -120,7 +114,8 @@ class _NewsPageState extends State<NewsPage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  _buildCategoryButton(context),
+                                  // _buildCategoryButton(context),
+                                  const SizedBox.shrink(),
                                   _buildLikeButton(news, index),
                                   _buildUpvoteButton(),
                                 ],

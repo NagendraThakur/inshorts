@@ -1,9 +1,8 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
-import 'package:inshorts/constants/config.dart';
-import 'package:inshorts/repository/api/get_repository.dart';
-import 'package:inshorts/repository/api/post_repository.dart';
+import 'package:inshorts/repository/get_repository.dart';
+import 'package:inshorts/repository/post_repository.dart';
 import 'package:inshorts/model/category_model.dart';
 import 'package:inshorts/shared/shared_pre.dart';
 part 'interest_state.dart';

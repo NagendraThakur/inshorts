@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inshorts/helper/dialog_utils.dart';
@@ -89,7 +86,7 @@ class SignUpPage extends StatelessWidget {
                   Center(
                     child: TextButton(
                       onPressed: () {
-                        savePreference(key: "token", value: "token");
+                        savePreference(key: "log", value: "log");
                         Navigator.of(context).popAndPushNamed("/interest");
                       },
                       child: Text(

@@ -1,7 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inshorts/helper/dialog_utils.dart';
+import 'package:inshorts/constants/config.dart';
 import 'package:inshorts/pages/interest/cubit/interest_cubit.dart';
 import 'package:inshorts/model/category_model.dart';
 import 'package:inshorts/shared/shared_pre.dart';
@@ -20,12 +19,22 @@ class InterestPage extends StatefulWidget {
 
 class _InterestPageState extends State<InterestPage> {
   List<CategoryModel> selectedCategories = [];
-  // List<CategoryModel> interestCategories = [];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    hasInterestLog();
+  }
+
+  hasInterestLog() async {
+    bool hasInterestLog = await hasPreference(key: "interestLog");
+    if (hasInterestLog) {
+      Navigator.of(context).popAndPushNamed("/news");
+      return;
+    } else if (Config.categoryIdList != null) {
+      Navigator.of(context).popAndPushNamed("/news");
+      return;
+    }
     BlocProvider.of<InterestCubit>(context).fetchCategory();
   }
 
@@ -33,7 +42,6 @@ class _InterestPageState extends State<InterestPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<InterestCubit, InterestState>(
       listener: (context, state) {
-        // TODO: implement listener
         if (state.message != null && state.message!.isNotEmpty) {
           toast(message: state.message!);
         } else if (state.success == true) {
@@ -143,13 +151,24 @@ class _InterestPageState extends State<InterestPage> {
             children: [
               CustomButton(
                 horizontalPadding: 10,
-                buttonText: "Choose at least 3 to continue",
+                buttonText: selectedCategories.length < 3
+                    ? "Choose at least ${3 - selectedCategories.length} to continue"
+                    : "Continue",
                 onPressed: () {
+                  savePreference(key: "interestLog", value: "category");
                   if (selectedCategories.length >= 3) {
-                    BlocProvider.of<InterestCubit>(context).assignCategory(
-                        categoryIdList: selectedCategories
-                            .map((category) => category.id!)
-                            .toList());
+                    List<int> categoryIdList = selectedCategories
+                        .map((category) => category.id!)
+                        .toList();
+                    Config.categoryIdList = categoryIdList;
+                    if (Config.token == null) {
+                      savePreference(
+                          key: "interest", value: categoryIdList.toString());
+                      Navigator.of(context).popAndPushNamed("/news");
+                      return;
+                    }
+                    BlocProvider.of<InterestCubit>(context)
+                        .assignCategory(categoryIdList: categoryIdList);
                   } else {
                     toast(message: "Please Select atleast 3");
                   }
@@ -157,6 +176,7 @@ class _InterestPageState extends State<InterestPage> {
               ),
               TextButton(
                   onPressed: () {
+                    savePreference(key: "interestLog", value: "category");
                     Navigator.of(context).popAndPushNamed("/news");
                   },
                   child: const Text("Skip"))

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:inshorts/constants/config.dart';
 import 'package:inshorts/shared/shared_pre.dart';
@@ -19,21 +20,41 @@ class _LanguagePageState extends State<LanguagePage> {
 
   languagecheck() async {
     bool hasLanguage = await hasPreference(key: "language");
+    bool hasLog = await hasPreference(key: "log");
     bool hasInterest = await hasPreference(key: "interest");
-
+    bool hasInterestLog = await hasPreference(key: "interestLog");
     bool hasToken = await hasPreference(key: "token");
+
+    print(hasLanguage);
+    print(hasLog);
+    print(hasInterest);
+    print(hasInterestLog);
+    print(hasToken);
     if (hasToken) {
       Config.token = await getPreference(key: "token");
     }
-    if (hasLanguage && hasToken && hasInterest) {
+    if (hasInterest) {
+      String? categoryIdListString = await getPreference(key: "interest");
+
+      if (categoryIdListString != null) {
+        List<String> categoryIdStrings = categoryIdListString
+            .replaceAll("[", "")
+            .replaceAll("]", "")
+            .split(", ");
+
+        Config.categoryIdList =
+            categoryIdStrings.map((e) => int.parse(e)).toList();
+      }
+    }
+    if (hasLanguage && hasLog && hasInterestLog) {
       Future.delayed(
           Duration.zero, () => Navigator.of(context).popAndPushNamed("/news"));
     } else if (hasLanguage == false) {
       return;
-    } else if (hasToken == false) {
+    } else if (hasToken == false && hasLog == false) {
       Future.delayed(Duration.zero,
           () => Navigator.of(context).popAndPushNamed("/sign_up"));
-    } else if (hasInterest == false) {
+    } else if (hasInterestLog == false) {
       Future.delayed(Duration.zero,
           () => Navigator.of(context).popAndPushNamed("/interest"));
     }
